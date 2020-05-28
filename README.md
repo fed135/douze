@@ -1,33 +1,18 @@
-# undici
+# Douze
 
-![Node CI](https://github.com/mcollina/undici/workflows/Node%20CI/badge.svg)  [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](http://standardjs.com/)
+An HTTP/1.1 client, written from scratch for Node.js. - With quic transport
 
-An HTTP/1.1 client, written from scratch for Node.js.
-
-> Undici means eleven in Italian. 1.1 -> 11 -> Eleven -> Undici.
-It is also a Stranger Things reference.
-
-<!--
-Picture of Eleven
--->
+> Since `undici` means eleven in Italian, Douze means twelve in french.
 
 ## Install
 
 ```
-npm i undici
+npm i @fed135/douze
 ```
 
 ## Benchmarks
 
-Machine: 2.7 GHz Quad-Core Intel Core i7
-Configuration: Node v14.2, HTTP/1.1 without TLS, 100 connections
-
-```
-http - keepalive - pipe x 6,545 ops/sec ±12.47% (64 runs sampled)
-undici - pipeline - pipe x 9,560 ops/sec ±3.68% (77 runs sampled)
-undici - request - pipe x 9,797 ops/sec ±6.80% (77 runs sampled)
-undici - stream - pipe x 11,599 ops/sec ±0.89% (78 runs sampled)
-```
+*TODO*
 
 The benchmark is a simple `hello world` [example](benchmarks/index.js).
 
@@ -116,7 +101,7 @@ Returns a promise if no callback is provided.
 Example:
 
 ```js
-const { Client } = require('undici')
+const { Client } = require('douze')
 const client = new Client(`http://localhost:3000`)
 
 client.request({
@@ -159,7 +144,7 @@ To use `AbortController`, you will need to `npm i abort-controller`.
 
 ```js
 const { AbortController } = require('abort-controller')
-const { Client } = require('undici')
+const { Client } = require('douze')
 
 const client = new Client'http://localhost:3000')
 const abortController = new AbortController()
@@ -180,7 +165,7 @@ Alternatively, any `EventEmitter` that emits an `'abort'` event may be used as a
 
 ```js
 const EventEmitter = require('events')
-const { Client } = require('undici')
+const { Client } = require('douze')
 
 
 const client = new Client'http://localhost:3000')
@@ -229,7 +214,7 @@ The `data` parameter in `factory` is defined as follow:
 Returns a promise if no callback is provided.
 
 ```js
-const { Client } = require('undici')
+const { Client } = require('douze')
 const client = new Client(`http://localhost:3000`)
 const fs = require('fs')
 
@@ -301,7 +286,7 @@ The `handler` should validate the response and save any
 required state. If there is an error it should be thrown.
 
 ```js
-const { Client } = require('undici')
+const { Client } = require('douze')
 const client = new Client(`http://localhost:3000`)
 const fs = require('fs')
 const stream = require('stream')
@@ -398,7 +383,7 @@ called and the client shutdown has completed.
   `client.size > 0`.
 
 <a name='pool'></a>
-### `new undici.Pool(url, opts)`
+### `new douze.Pool(url, opts)`
 
 A pool of [`Client`][] connected to the same upstream target.
 
@@ -429,13 +414,13 @@ Calls [`client.close(callback)`](#close) on all the clients.
 Calls [`client.destroy(err, callback)`](#destroy) on all the clients.
 
 <a name='errors'></a>
-### `undici.errors`
+### `Douze.errors`
 
-Undici exposes a variety of error objects that you can use to enhance your error handling.
+Douze exposes a variety of error objects that you can use to enhance your error handling.
 You can find all the error objects inside the `errors` key.
 
 ```js
-const { errors } = require('undici')
+const { errors } = require('douze')
 ```
 
 | Error                     | Error Codes                       | Description                                    |
@@ -452,17 +437,17 @@ const { errors } = require('undici')
 
 ## Specification Compliance
 
-This section documents parts of the HTTP/1.1 specification which Undici does 
+This section documents parts of the HTTP/1.1 specification which Douze does 
 not support or does not fully implement.
 
 ### Informational Responses
 
-Undici does not support 1xx informational responses and will either
+Douze does not support 1xx informational responses and will either
 ignore or error them.
 
 #### Expect
 
-Undici does not support the `Expect` request header field. The request
+Douze does not support the `Expect` request header field. The request
 body is  always immediately sent and the `100 Continue` response will be 
 ignored.
 
@@ -470,21 +455,21 @@ Refs: https://tools.ietf.org/html/rfc7231#section-5.1.1
 
 #### Upgrade
 
-Undici does not support the the `Upgrade` request header field. A 
+Douze does not support the the `Upgrade` request header field. A 
 `101 Switching Protocols` response will cause an `UND_ERR_NOT_SUPPORTED` error.
 
 Refs: https://tools.ietf.org/html/rfc7230#section-6.7
 
 #### Hints
 
-Undici does not support early hints. A `103 Early Hint` response will
+Douze does not support early hints. A `103 Early Hint` response will
 be ignored.
 
 Refs: https://tools.ietf.org/html/rfc8297
 
 ### Trailer
 
-Undici does not support the the `Trailer` response header field. Any response
+Douze does not support the the `Trailer` response header field. Any response
 trailer headers will be ignored.
 
 Refs: https://tools.ietf.org/html/rfc7230#section-4.4
@@ -494,13 +479,13 @@ Refs: https://tools.ietf.org/html/rfc7230#section-4.4
 Uncidi will only use pipelining if configured with a `pipelining` factor 
 greater than `1`.
 
-Undici always assumes that connections are persistent and will immediatly 
+Douze always assumes that connections are persistent and will immediatly 
 pipeline requests, without checking whether the connection is persistent.
 Hence, automatic fallback to HTTP/1.0 or HTTP/1.1 without pipelining is 
 not supported.
 
-Undici will immediately pipeline when retrying requests afters a failed
-connection. However, Undici will not retry the first remaining requests in
+Douze will immediately pipeline when retrying requests afters a failed
+connection. However, Douze will not retry the first remaining requests in
 the prior pipeline and instead error the corresponding callback/promise/stream.
 
 Refs: https://tools.ietf.org/html/rfc2616#section-8.1.2.2
